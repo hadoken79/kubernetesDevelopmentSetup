@@ -1,4 +1,4 @@
-#kubernetes Demo
+# kubernetes Demo
 cluster is setup in minikube
 
 To get this demo running
@@ -6,13 +6,13 @@ the deplayments have to be created in the correct order.
 feg. in mongo-express.yaml certain variables are set from a configmap.
 So this configma must extist first, before the deployment for mongo-express can be created
 
-to list running deployments
+to list running deployments 
     kubectl get deployment
 
-to list services
+to list services 
     kubectl get services
 
-...pods
+...pods 
     kubectl get pods
 
 by default only ressources in 'default' namespace are listet.  
@@ -40,7 +40,7 @@ spec:
 ```
 
 In a production Enviroment it is better to do the routing with ingress (needs to be installed... there are many different options also one from k8s with nginx)
-to activate ingress in minikube: (which uses the official k8s ngnix ingress controller)
+to activate ingress in minikube: (which uses the official k8s ngnix ingress controller) 
     minikube addons enable ingress
 
 Ingress controller routes external request then to ingress pod, which connects to defined "internal" services
