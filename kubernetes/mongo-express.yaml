@@ -1,0 +1,67 @@
+#Definition for Pod
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo-express
+  labels:
+    app: mongo-express
+spec:
+  replicas: 1
+  selector: 
+    matchLabels:
+      app: mongo-express
+  template:
+    metadata:
+      labels:
+        app: mongo-express
+    spec:
+      containers:
+      - name: mongo-express
+        image: mongo-express
+        ports:
+        - containerPort: 8081
+        env:
+        - name: ME_CONFIG_MONGODB_SERVER
+          valueFrom: #from configmap element in k8s
+            configMapKeyRef:
+              name: mongodb-configmap
+              key: database_url
+        - name: ME_CONFIG_MONGODB_ADMINUSERNAME
+          valueFrom:
+            secretKeyRef:
+              name: mongodb-secret
+              key: mongo-root-username #testuser
+        - name: ME_CONFIG_MONGODB_ADMINPASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mongodb-secret
+              key: mongo-root-password #testpassword
+---
+    #external service option1. this is ok for developing. for production the service can be internal and ingress should manage external availability
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: mongo-express-service
+# spec:
+#   selector:
+#     app: mongo-express
+#   type: LoadBalancer #for external availability of this service: this type accepts external requests by assigning externap ip to service
+#   ports:
+#   - protocol: TCP
+#     port: 8081
+#     targetPort: 8081
+#     nodePort: 30000 #for external availability of this service: external port for entering kluster. has to be set by definition between 30000 - 32767
+
+
+ # internal service option2
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo-express-service
+spec:
+  selector:
+    app: mongo-express
+  ports:
+  - protocol: TCP
+    port: 8081
+    targetPort: 8081
