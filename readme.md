@@ -7,12 +7,18 @@ feg. in mongo-express.yaml certain variables are set from a configmap.
 So this configma must extist first, before the deployment for mongo-express can be created
 
 to list running deployments 
+
+
     kubectl get deployment
 
-to list services 
+to list services
+
+
     kubectl get services
 
 ...pods 
+
+
     kubectl get pods
 
 by default only ressources in 'default' namespace are listet.  
