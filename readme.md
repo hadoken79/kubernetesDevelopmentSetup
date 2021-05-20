@@ -22,11 +22,14 @@ to list services
     kubectl get pods
 
 by default only ressources in 'default' namespace are listet.  
-to get elements from specific namespace (example for ingress controller wich is in 'kube-system' namespace) 
+to get elements from specific namespace (example for ingress controller wich is in 'kube-system' namespace)
+
     kubectl get pod -n kube-system
 
 To create deployments use kubectl
+
     kubectl apply -f mongo-configmap.yaml
+
 apply can be used for new creations and for updates.
 
 In this yaml files, definitions for Deployments and corespondent services are definded in same file.
@@ -72,8 +75,12 @@ spec:
 ```
 now for testing purpouses map the Ingress IP in /etc/hosts to dashboard.com
 to get the Ingress-IP:
+
     kubectl get Ingress [--watch]
+
 if Ingress is in certain namespace
+
     kubectl get Ingress -n [mynamespace]` | `kubectl get Ingress -n [mynamespace]`
+    
 `dashboard-ingress   <none>   dashboard.com   192.168.49.2   80      6m44s`
 
