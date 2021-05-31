@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rederecter
+  namespace: default
+  labels:
+    app: rederecter
+spec:
+  replicas: 1
+  selector: 
+    matchLabels:
+      app: rederecter
+  template:
+    metadata:
+      labels:
+        app: rederecter
+    spec:
+      containers:
+      - name: rederecter
+        image: morbz/docker-web-redirect
+        ports:
+        - containerPort: 80
+        env:
+        - name: REDIRECT_TARGET
+          value: https://bing.com
+---
+# Default redirect Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: rederecter-service
+  namespace: default
+spec:
+  selector:
+    app: rederecter
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
