@@ -13,8 +13,8 @@ spec:
       kind: StorageBucket
       name: static-assets
   rules:
-  #- host: dashboard.com
-  - http:
+  - host: dashboard.com
+    http:
       paths:
       - path: /
         pathType: Prefix
