@@ -8,16 +8,13 @@ So this configma must extist first, before the deployment for mongo-express can 
 
 to list running deployments 
 
-
     kubectl get deployment
 
 to list services
 
-
     kubectl get services
 
 ...pods 
-
 
     kubectl get pods
 
@@ -81,6 +78,51 @@ to get the Ingress-IP:
 if Ingress is in certain namespace
 
     kubectl get Ingress -n [mynamespace]` | `kubectl get Ingress -n [mynamespace]`
-    
+   
 `dashboard-ingress   <none>   dashboard.com   192.168.49.2   80      6m44s`
 
+full example, (default backend isn't workung as expected doe)
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: dashboard-ingress-resource
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/add-base-url: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  defaultBackend:
+    resource:
+      apiGroup: k8s.example.com
+      kind: StorageBucket
+      name: static-assets
+  rules:
+  - host: dashboard.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: mongo-express-service
+            port: 
+              number: 8081
+      - path: /red
+        pathType: Prefix
+        backend:
+          service:
+            name: rederecter-service
+            port: 
+              number: 80
+      - path: /test
+        pathType: Prefix
+        backend:
+          service:
+            name: mongo-express-service
+            port: 
+              number: 8081
+```
+
+ 
