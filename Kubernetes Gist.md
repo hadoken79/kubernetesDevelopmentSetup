@@ -8,7 +8,15 @@ if no namespace parameter is provided, kubectl checks in "default" namespace
 
 to list pods
 
-    kubectl get pods [-n mynamespacename]
+    kubectl get pod[s] [-n mynamespacename]
+
+to get more nformation  
+
+    kubectl get pod <podname> -o wide
+
+for all pods
+
+    kubectl get pod -o wide
 
 pods are connected with a internal or external service  
 to list services  
@@ -143,6 +151,7 @@ spec:
               key: database_url
 ```
 
+## Services
 pods communicate and are accessed through services. most of the time   it is best to defines those in the same file as the pod  
 with three "---" kubernetes sees theese sections as separate files
 
@@ -199,6 +208,21 @@ spec:
     port: 8081
     targetPort: 8081
     nodePort: 30000 #for external availability of this service: external port for entering kluster. has to be set by definition between 30000 - 32767
+```
+When the services has to use multiple target ports, the port definitions need to be named.  
+if just a single port is used, name parameter is optional.  
+```yaml
+...
+  ports:
+  - name: mongodb
+    protocol: TCP
+    port: 27017
+    targetPort: 27017
+  - name: mongodb_exporter
+    protocol: TCP
+    port: 9216
+    targetPort: 9216
+...
 ```
 
 ## ingress
@@ -481,6 +505,53 @@ spec:
       storage: 100Gi
   storageClassName: storage-class-name
 ```
+
+## Statefull Set
+
+For statefull applications "delpoyment" isn't the right choise.  
+In that case use "statfull sets" this allows for managin a cluster f.e. mysql pods.  
+One will be the master who can write to the storage and all the others will be workers, who only can read.  
+In a statefull set the identity of a pod is fixed (name and dns) so when one dies it can take the same place to the same state,   
+as the previous was. evey worker will automaticaly synchronize the data from the previous pod in line.
+
+## Different Services in K8s
+
+### Cluster IP Service
+
+This is the default Service, if no type is specified
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb-service
+spec:
+...
+```
+### Headless Service
+
+In cases where pods need to cummuinicate directly and not throu a service  
+A Headless service can be used. Normaly when a client makes a dns-lookup call,   
+the clusterIP of the service is returned. A Headless service has no clusterIP asigned  
+and in this case the clusterIPs of the pods are returned. no they can address each other directly. 
+A typical usecase whould be a database, where a regular "clusterIP service" is used to access the database-service,  
+f.e. for node to connect to db, and a "Headless Service" aditional.  
+So the worker pods can directly connect to previous, or masternodes, without going to service first.  
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo-express-service
+spec:
+  clusterIP: None
+  selector:
+  ...
+```
+
+
+
+
+
+
 
 
 
